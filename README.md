@@ -4,3 +4,4 @@
 * Eduardo Matheus de Menezes Souto
 * Daniel Oliveira Silva
 * Víctor Quirino
+* Lorena Andrade
