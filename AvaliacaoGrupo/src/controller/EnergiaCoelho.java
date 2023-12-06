@@ -1,6 +1,7 @@
 package controller;
 
 import model.*;
+import validator.Validacoes;
 import view.Interface;
 
 import java.text.SimpleDateFormat;
@@ -86,11 +87,15 @@ public class EnergiaCoelho {
 	public static void incluirCliente() {
 		System.out.println("Incluir Cliente:");
 		System.out.print("Nome: ");
-		scanner.nextLine(); // Consumir a quebra de linha pendente
 		String nome = scanner.nextLine();
 		System.out.print("CPF: ");
 		String cpf = scanner.nextLine();
 
+		if(!Validacoes.validaCpf(cpf)) {
+			System.out.println("Cpf invalido!");
+			return;
+		}
+		
 		for (Cliente cliente : clientes) {
 			if (cliente.getCpf().equals(cpf)) {
 				System.out.println("Não é possivel incluir. Motivo CPF: " + cpf + " já existe!");
