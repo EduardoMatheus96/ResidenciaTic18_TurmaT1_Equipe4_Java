@@ -9,7 +9,6 @@ import java.util.*;
 public class EnergiaCoelho {
 	
 	private static SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-	private static Long idsFatura = 0L;
 	
 	public static ArrayList<Cliente> getClientes() {
 		return clientes;
@@ -36,10 +35,18 @@ public class EnergiaCoelho {
 	}
 
 	private static ArrayList<Cliente> clientes = new ArrayList<>() {{
-        add(new Cliente("João", "12345678900"));
-        add(new Cliente("Maria", "98765432100"));
+		// Clientes com imóvel
+		add(criarClienteComImovel("João", "12345678900", 100, "Rua A, lot 58", 10, 0));
+        add(criarClienteComImovel("Maria", "98765432100", 101, "Av Brasil, 1500", 5, 3));
+        add(criarClienteComImovel("Lorena", "00352442590", 102, "Rua Major Deocleciano, 58", 5, 0));
     }};
     
+    private static Cliente criarClienteComImovel(String nome, String cpf, int matricula, String endereco, int ultimaLeitura, int penultimaLeitura) {
+        Cliente novoCliente = new Cliente(nome, cpf);
+        Imovel novoImovel = new Imovel(matricula, endereco, ultimaLeitura, penultimaLeitura);
+        novoCliente.adicionarImovel(novoImovel);
+        return novoCliente;
+    }
 	private static ArrayList<Fatura> faturas = new ArrayList<>();
 	
 	private static Scanner scanner = new Scanner(System.in);
@@ -314,9 +321,8 @@ public class EnergiaCoelho {
 			} while (leituraAtual < ultimaLeitura); 
 
 
-			Fatura novaFatura = new Fatura(idsFatura, imovel, leituraAtual, penultimaLeitura);
+			Fatura novaFatura = new Fatura(imovel, leituraAtual, penultimaLeitura);
 			faturas.add(novaFatura);
-			idsFatura++;
 
 			// Atualiza a última leitura no imóvel
 			imovel.setPenultimaLeitura(ultimaLeitura);
@@ -332,11 +338,7 @@ public class EnergiaCoelho {
 		System.out.println("Faturas Abertas (Não Pagas):");
 		for (Fatura fatura : faturas) {
 			if (!fatura.isQuitada()) {
-				System.out.println("Matrícula: " + fatura.getImovel().getMatricula());
-				System.out.println("Valor: " + fatura.getValorCalculado());
-				System.out.println("Data de Emissão: " + fatura.getDataEmissao());
-				System.out.println("Quitada: " + fatura.isQuitada());
-				System.out.println("------");
+                System.out.println(fatura.toString());
 			}
 		}
 	}
@@ -344,12 +346,7 @@ public class EnergiaCoelho {
 	public static void listarTodasFaturas() {
 		System.out.println("Todas as Faturas:");
 		for (Fatura fatura : faturas) {
-			System.out.println("Id: " + fatura.getId());
-			System.out.println("Matrícula: " + fatura.getImovel().getMatricula());
-			System.out.println("Valor: " + fatura.getValorCalculado());
-			System.out.println("Data de Emissão: " + fatura.getDataEmissao());
-			System.out.println("Quitada: " + fatura.isQuitada());
-			System.out.println("------");
+            System.out.println(fatura.toString());
 		}
 	}
 
@@ -365,30 +362,49 @@ public class EnergiaCoelho {
 		}
 
 		System.out.printf("Digite a matrícula do imovel de %s para gerar o pagamento da fatura:%n", cliente.getNome());
-		int matricula = scanner.nextInt();;
+		int matricula = scanner.nextInt();
 		for(var imovel : cliente.getImoveis()){
 			if(imovel.getMatricula() == matricula){
-				System.out.println("Digite o valor do pagamento:");
-				double valor = scanner.nextDouble();
-				var pagamento = new Pagamento(valor);
+				int quantasFaturas = 0;
+				long idFatura = 0;
+				// Mostrar as faturas vinculadas ao imóvel
+	            System.out.println("Faturas vinculadas ao imóvel:");
+	            for (var fatura : faturas) {
+	                if (fatura.getImovel().equals(imovel)) {
+	                	quantasFaturas++;
+	                	idFatura = fatura.getId();
+	                    System.out.println(fatura.toString());
+	                }
+	            }
+	            //Se existir mais de uma fatura
+		        if(quantasFaturas>1) {
+					System.out.println("Digite o Id da fatura para efetuar o pagamento:");
+					long id = scanner.nextLong();
+					idFatura = id;
+	            }
 
 				for(var fatura : faturas){
-					if(fatura.getImovel().equals(imovel)){
+					if(fatura.getId().equals(idFatura)){
+						System.out.println("Digite o valor do pagamento:");
+						double valor = scanner.nextDouble();
+						var pagamento = new Pagamento(valor);
+						
 						fatura.adicionaPagamento(pagamento);
 						System.out.println("Pagamento efetuado com sucesso!");
 						return;
 					}
 				}
+				System.out.println("Id da fatura não encontrado. O pagamento não efetuado.");
 			}
+			
 		}
 	}
 
 	public static void listarPagamentos(){
 		System.out.println("Lista de pagamentos:");
-		int i = 1;
 		for(var fatura : faturas){
 			System.out.println("--------------");
-			System.out.println("Fatura nº: " + i);
+			System.out.println("Fatura nº: " + fatura.getId());
 			System.out.println("Imovel: " + fatura.getImovel());
 			System.out.println("Pagamentos");
 			for(var pagamento : fatura.getPagamentos()){

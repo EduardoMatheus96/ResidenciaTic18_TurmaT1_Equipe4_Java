@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Fatura {
+    private static Long proximoId = 0L; 
 	private Long id;
 	private Imovel imovel;
 	private int ultimaLeitura;
@@ -17,13 +18,23 @@ public class Fatura {
 
 	@Override
 	public String toString() {
-		return "Matrícula do Imóvel: " + imovel.getMatricula() + "\nData de Emissão: " + dataEmissao
-				+ "\nÚltima Leitura: " + ultimaLeitura + "\nPenúltima Leitura: " + penultimaLeitura
-				+ "\nValor Calculado: " + valorCalculado + "\nQuitada: " + quitada + "\n---------------------";
+		double valorParcial = valorPago();
+		String valorParcialStr = "";
+		if (valorParcial > 0) {
+			valorParcialStr = "\nValor Pago Parcial: " + valorParcial;
+		}
+		return "Id da fatura: " + id + 
+				"\nMatrícula do Imóvel: " + imovel.getMatricula() +
+				"\nData de Emissão: " + dataEmissao +
+				"\nÚltima Leitura: " + ultimaLeitura + 
+				"\nPenúltima Leitura: " + penultimaLeitura +
+				valorParcialStr +
+				"\nValor Calculado: " + valorCalculado + 
+				"\nQuitada: " + quitada + "\n---------------------";
 	}
 
-	public Fatura(Long id, Imovel imovel,  int ultimaLeitura, int penultimaLeitura) {
-		this.id = id;
+	public Fatura(Imovel imovel,  int ultimaLeitura, int penultimaLeitura) {
+		this.id = ++proximoId; 
 		this.imovel = imovel;
 		this.ultimaLeitura = ultimaLeitura;
 		this.penultimaLeitura = penultimaLeitura;
