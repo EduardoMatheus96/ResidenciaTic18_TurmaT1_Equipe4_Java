@@ -321,7 +321,7 @@ public class EnergiaCoelho {
 			} while (leituraAtual < ultimaLeitura); 
 
 
-			Fatura novaFatura = new Fatura(imovel, leituraAtual, penultimaLeitura);
+			Fatura novaFatura = new Fatura(imovel, ultimaLeitura, penultimaLeitura);
 			faturas.add(novaFatura);
 
 			// Atualiza a última leitura no imóvel
