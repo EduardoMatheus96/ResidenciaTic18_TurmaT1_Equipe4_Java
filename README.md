@@ -5,3 +5,4 @@
 * Daniel Oliveira Silva
 * Víctor Quirino
 * Lorena Andrade
+* Danilo Silveira
