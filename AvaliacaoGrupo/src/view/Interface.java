@@ -1,7 +1,6 @@
 package view;
 import controller.EnergiaCoelho;
 
-import controller.EnergiaCoelho;
 import java.util.ArrayList;
 
 import java.util.Scanner;
